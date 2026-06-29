@@ -1,0 +1,23 @@
+{
+  "name": "@valentindft/ng-base-config",
+  "version": "1.0.0",
+  "description": "Config ESLint, Prettier, TypeScript et lint-staged partagee entre tous les projets Angular",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "files": [
+    "eslint",
+    "prettier",
+    "tsconfig",
+    "lint-staged"
+  ],
+  "exports": {
+    "./eslint": "./eslint/index.js",
+    "./prettier": "./prettier/index.js",
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./lint-staged": "./lint-staged/index.js"
+  }
+}
