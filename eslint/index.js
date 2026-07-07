@@ -24,6 +24,12 @@ module.exports = function ngBaseConfig({ prefix = 'app' } = {}) {
         ...tseslint.configs.stylistic,
         ...angular.configs.tsRecommended,
       ],
+      languageOptions: {
+        parserOptions: {
+          project: true,
+          tsconfigRootDir: process.cwd(),
+        },
+      },
       processor: angular.processInlineTemplates,
       rules: {
         '@angular-eslint/directive-selector': [
@@ -34,12 +40,18 @@ module.exports = function ngBaseConfig({ prefix = 'app' } = {}) {
           'error',
           { type: 'element', prefix, style: 'kebab-case' },
         ],
+        '@angular-eslint/prefer-on-push-change-detection': 'warn',
         '@typescript-eslint/no-unused-vars': [
           'warn',
           { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
         ],
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/no-explicit-any': 'warn',
+        '@typescript-eslint/no-floating-promises': 'error',
+        '@typescript-eslint/await-thenable': 'error',
+        '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports' }],
+        'eqeqeq': ['error', 'always'],
+        'no-console': 'warn',
       },
     },
     {

@@ -13,17 +13,21 @@
     "eslint",
     "prettier",
     "tsconfig",
-    "lint-staged"
+    "lint-staged",
+    "stylelint"
   ],
   "exports": {
     "./eslint": "./eslint/index.js",
     "./prettier": "./prettier/index.js",
     "./tsconfig/base.json": "./tsconfig/base.json",
-    "./lint-staged": "./lint-staged/index.js"
+    "./lint-staged": "./lint-staged/index.js",
+    "./stylelint": "./stylelint/index.js"
   },
   "peerDependencies": {
     "@eslint/js": ">=9.0.0",
     "angular-eslint": ">=18.0.0",
-    "typescript-eslint": ">=8.0.0"
+    "typescript-eslint": ">=8.0.0",
+    "stylelint": ">=16.0.0",
+    "stylelint-config-standard-scss": ">=13.0.0"
   }
 }

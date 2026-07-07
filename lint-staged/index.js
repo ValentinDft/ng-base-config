@@ -8,6 +8,6 @@
 module.exports = {
   '*.ts': ['eslint --fix', 'prettier --write'],
   '*.html': ['eslint --fix', 'prettier --write'],
-  '*.{scss,css}': ['prettier --write'],
+  '*.{scss,css}': ['stylelint --fix', 'prettier --write'],
   '*.{json,md}': ['prettier --write'],
 };
