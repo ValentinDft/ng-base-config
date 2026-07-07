@@ -1,6 +1,6 @@
 # @valentindft/ng-base-config
 
-Config ESLint, Prettier, TypeScript et lint-staged mutualisée entre tous mes projets Angular. Publiée en privé sur **GitHub Packages**.
+Config ESLint, Prettier, TypeScript, lint-staged et Stylelint mutualisée entre tous mes projets Angular. Publiée en privé sur **GitHub Packages**.
 
 ---
 
@@ -20,17 +20,20 @@ angular-base-toolkit/
 └── create-ng-app/      ← CLI npx — orchestre ng new + branchement de ce package
 ```
 
-Chaque projet Angular consommateur installe `@valentindft/ng-base-config` comme dépendance de dev et y pointe directement depuis `eslint.config.mjs`, `package.json` (prettier, lint-staged) et `tsconfig.json` :
+Chaque projet Angular consommateur installe `@valentindft/ng-base-config` comme dépendance de dev et y pointe directement depuis `eslint.config.mjs`, `package.json`, `tsconfig.json` et `stylelint.config.cjs` :
 
 ```
-mongarage/                      nextframe/
-├── eslint.config.mjs ──────────────────────────────────┐
-├── package.json                                         │
-│   ├── prettier: "@valentindft/ng-base-config/prettier" ├──► @valentindft/ng-base-config
-│   └── lint-staged: "…/lint-staged"                    │     ├── eslint/index.js
-└── tsconfig.json                                        │     ├── prettier/index.js
-    └── extends: "…/tsconfig/base.json" ────────────────┘     ├── lint-staged/index.js
-                                                               └── tsconfig/base.json
+mongarage/                          nextframe/
+├── eslint.config.mjs ──────────────────────────────────────┐
+├── stylelint.config.cjs                                     │
+├── lint-staged.config.cjs                                   │
+├── package.json                                             │
+│   └── prettier: "@valentindft/ng-base-config/prettier" ───├──► @valentindft/ng-base-config
+└── tsconfig.json                                            │     ├── eslint/index.js
+    └── extends: "…/tsconfig/base.json" ───────────────────┘     ├── prettier/index.js
+                                                                   ├── tsconfig/base.json
+                                                                   ├── lint-staged/index.js
+                                                                   └── stylelint/index.js
 ```
 
 ---
@@ -39,16 +42,25 @@ mongarage/                      nextframe/
 
 ### `eslint/index.js` — factory flat config ESLint
 
-Exporte une fonction `buildConfig({ prefix })` qui retourne une flat config ESLint complète pour Angular.
+Exporte une fonction `buildConfig({ prefix })` qui retourne une flat config ESLint complète pour Angular. Nécessite que le projet ait un `tsconfig.json` valide (pour les règles type-aware).
 
 **Extends :** `@eslint/js` · `typescript-eslint` (recommended + stylistic) · `angular-eslint` (tsRecommended + templateRecommended + templateAccessibility)
 
-**Règles ajoutées :**
-- `@angular-eslint/component-selector` : kebab-case avec le prefix passé en argument
-- `@angular-eslint/directive-selector` : camelCase avec le prefix passé en argument
-- `@typescript-eslint/no-unused-vars` : warn (ignore les variables préfixées `_`)
-- `@typescript-eslint/no-explicit-any` : warn
-- `@typescript-eslint/explicit-function-return-type` : off
+**Règles :**
+
+| Règle | Niveau | Raison |
+|---|---|---|
+| `@angular-eslint/component-selector` | error | kebab-case avec le prefix du projet |
+| `@angular-eslint/directive-selector` | error | camelCase avec le prefix du projet |
+| `@angular-eslint/prefer-on-push-change-detection` | warn | cohérence avec l'archi signals/zoneless |
+| `@typescript-eslint/no-unused-vars` | warn | ignore les vars préfixées `_` |
+| `@typescript-eslint/no-explicit-any` | warn | décourage `any` sans l'interdire |
+| `@typescript-eslint/explicit-function-return-type` | off | trop verbeux avec l'inférence TS |
+| `@typescript-eslint/no-floating-promises` | error | empêche d'oublier un `await` |
+| `@typescript-eslint/await-thenable` | error | empêche d'`await` une non-Promise |
+| `@typescript-eslint/consistent-type-imports` | warn | force `import type { Foo }` pour les types |
+| `eqeqeq` | error | interdit `==`, force `===` |
+| `no-console` | warn | évite les `console.log` oubliés en prod |
 
 **Ignores globaux :** `dist/**`, `.angular/**`, `coverage/**`
 
@@ -84,6 +96,7 @@ Le parser `angular` pour les `.html` est nécessaire pour que Prettier comprenne
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -97,7 +110,29 @@ Le parser `angular` pour les `.html` est nécessaire pour que Prettier comprenne
 }
 ```
 
+`exactOptionalPropertyTypes` distingue une propriété absente (`foo?: string`) d'une propriété présente mais `undefined` (`foo: string | undefined`). Particulièrement utile avec les DTOs Supabase.
+
 Ce fichier est étendu via `tsconfig.json` du projet consommateur — les options spécifiques au projet (`target`, `module`, `outDir`, etc.) restent dans le tsconfig du projet.
+
+---
+
+### `stylelint/index.js` — config Stylelint SCSS
+
+```js
+{
+  extends: ['stylelint-config-standard-scss'],
+  rules: {
+    'selector-class-pattern': '^[a-z][a-z0-9-]*(__[a-z][a-z0-9-]*)?(--[a-z][a-z0-9-]*)?$',
+    'no-descending-specificity': null,
+    'scss/at-rule-no-unknown': true,
+    'import-notation': 'string',
+  }
+}
+```
+
+- `selector-class-pattern` : enforce la convention **BEM** (`block__element--modifier`)
+- `no-descending-specificity` : désactivé car trop bruyant avec l'encapsulation des composants Angular
+- `import-notation: 'string'` : force `@use 'variables'` plutôt que `@use url('variables')`
 
 ---
 
@@ -107,7 +142,7 @@ Ce fichier est étendu via `tsconfig.json` du projet consommateur — les option
 {
   '*.ts':          ['eslint --fix', 'prettier --write'],
   '*.html':        ['eslint --fix', 'prettier --write'],
-  '*.{scss,css}':  ['prettier --write'],
+  '*.{scss,css}':  ['stylelint --fix', 'prettier --write'],
   '*.{json,md}':   ['prettier --write'],
 }
 ```
@@ -136,7 +171,10 @@ Génère le PAT sur **GitHub → Settings → Developer settings → Personal ac
 ### 1. Installer le package et ses pairs
 
 ```bash
-npm install -D @valentindft/ng-base-config eslint @eslint/js typescript-eslint angular-eslint prettier husky lint-staged
+npm install -D @valentindft/ng-base-config \
+  eslint @eslint/js typescript-eslint angular-eslint \
+  prettier husky lint-staged \
+  stylelint stylelint-config-standard-scss
 ```
 
 ### 2. ESLint — créer `eslint.config.mjs`
@@ -155,15 +193,19 @@ export default buildConfig({ prefix: 'ngf' }); // adapte le prefix à ton projet
 }
 ```
 
-### 4. lint-staged — `package.json`
+### 4. lint-staged — `lint-staged.config.cjs`
 
-```json
-{
-  "lint-staged": "@valentindft/ng-base-config/lint-staged"
-}
+```js
+module.exports = require('@valentindft/ng-base-config/lint-staged');
 ```
 
-### 5. TypeScript — `tsconfig.json`
+### 5. Stylelint — `stylelint.config.cjs`
+
+```js
+module.exports = require('@valentindft/ng-base-config/stylelint');
+```
+
+### 6. TypeScript — `tsconfig.json`
 
 Ajouter `ng-base-config` dans le tableau `extends` existant (ne pas remplacer le tsconfig Angular généré) :
 
@@ -173,18 +215,19 @@ Ajouter `ng-base-config` dans le tableau `extends` existant (ne pas remplacer le
 }
 ```
 
-### 6. Husky — hook pre-commit
+### 7. Husky — hooks git
 
 ```bash
 npx husky init
 echo "npx lint-staged" > .husky/pre-commit
 ```
 
-### 7. Vérifier que tout fonctionne
+### 8. Vérifier que tout fonctionne
 
 ```bash
 npm run lint      # zéro erreur ESLint
 npm run format    # Prettier appliqué
+npx stylelint "**/*.scss"
 git commit --allow-empty -m "test: vérifie le hook pre-commit"
 ```
 
@@ -237,7 +280,7 @@ npm list @valentindft/ng-base-config
 3. Publier :
    ```bash
    git add -A && git commit -m "feat: ..."
-   git tag v1.1.0
+   git tag v1.2.0
    git push && git push --tags
    ```
    Le workflow GitHub Actions publie automatiquement sur GitHub Packages.
@@ -253,7 +296,9 @@ npm list @valentindft/ng-base-config
 Ce package ne regroupe pas ESLint et ses plugins — chaque projet les installe directement pour garder le contrôle sur les versions :
 
 | Package | Version minimale |
-| ------- | ---------------- |
+|---|---|
 | `@eslint/js` | `>=9.0.0` |
 | `typescript-eslint` | `>=8.0.0` |
 | `angular-eslint` | `>=18.0.0` |
+| `stylelint` | `>=16.0.0` |
+| `stylelint-config-standard-scss` | `>=13.0.0` |
