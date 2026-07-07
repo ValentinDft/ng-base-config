@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Config ESLint, Prettier, TypeScript et lint-staged partagee entre tous les projets Angular",
   "license": "MIT",
+  "type": "commonjs",
   "private": false,
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
@@ -19,5 +20,10 @@
     "./prettier": "./prettier/index.js",
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./lint-staged": "./lint-staged/index.js"
+  },
+  "peerDependencies": {
+    "@eslint/js": ">=9.0.0",
+    "angular-eslint": ">=18.0.0",
+    "typescript-eslint": ">=8.0.0"
   }
 }
