@@ -1,6 +1,6 @@
 {
   "name": "@valentindft/ng-base-config",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Config ESLint, Prettier, TypeScript et lint-staged partagee entre tous les projets Angular",
   "license": "MIT",
   "type": "commonjs",

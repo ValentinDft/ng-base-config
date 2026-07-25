@@ -40,7 +40,7 @@ module.exports = function ngBaseConfig({ prefix = 'app' } = {}) {
           'error',
           { type: 'element', prefix, style: 'kebab-case' },
         ],
-        '@angular-eslint/prefer-on-push-change-detection': 'warn',
+        '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
         '@typescript-eslint/no-unused-vars': [
           'warn',
           { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
