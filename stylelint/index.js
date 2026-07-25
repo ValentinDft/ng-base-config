@@ -18,5 +18,6 @@ module.exports = {
     // Autorise les imports SCSS natifs (@use, @forward)
     'scss/at-rule-no-unknown': true,
     'import-notation': 'string',
+    'no-empty-source': null,
   },
 };
