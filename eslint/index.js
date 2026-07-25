@@ -5,7 +5,7 @@
 // qui varie d'un projet à l'autre, donc on l'expose en argument.
 //
 // Usage dans eslint.config.js d'un projet :
-//   const buildConfig = require('@valentindft/ng-base-config/eslint');
+//   const buildConfig = require('@valentindft/ng-base-config/eslint') ;
 //   module.exports = buildConfig({ prefix: 'ngf' });
 
 'use strict';
@@ -14,7 +14,7 @@ const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 
-module.exports = function ngBaseConfig({ prefix = 'app' } = {}) {
+module.exports = function ngBaseConfig({ prefix = 'app', tsconfigRootDir = process.cwd() } = {}) {
   return tseslint.config(
     {
       files: ['**/*.ts'],
@@ -26,8 +26,8 @@ module.exports = function ngBaseConfig({ prefix = 'app' } = {}) {
       ],
       languageOptions: {
         parserOptions: {
-          project: true,
-          tsconfigRootDir: process.cwd(),
+          projectService: true,
+          tsconfigRootDir,
         },
       },
       processor: angular.processInlineTemplates,
