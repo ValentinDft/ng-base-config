@@ -1,6 +1,10 @@
 # @valentindft/ng-base-config
 
-Config ESLint, Prettier, TypeScript, lint-staged et Stylelint mutualisée entre tous mes projets Angular. Publiée en privé sur **GitHub Packages**.
+Config ESLint, Prettier, TypeScript, lint-staged et Stylelint mutualisée entre tous mes projets Angular. Publiée publiquement sur **npm** : [`@valentindft/ng-base-config`](https://www.npmjs.com/package/@valentindft/ng-base-config).
+
+```bash
+npm install -D @valentindft/ng-base-config
+```
 
 ---
 
@@ -16,7 +20,7 @@ Ce package est l'un des deux composants du toolkit perso :
 
 ```
 angular-base-toolkit/
-├── ng-base-config/     ← CE package — config partagée, publié sur GitHub Packages
+├── ng-base-config/     ← CE package — config partagée, publié sur npm
 └── create-ng-app/      ← CLI npx — orchestre ng new + branchement de ce package
 ```
 
@@ -153,14 +157,7 @@ Déclenché automatiquement par Husky au `git commit`. Seuls les fichiers stagé
 
 ## Installation (prérequis machine)
 
-Ce package est publié sur GitHub Packages (registre privé). Il faut configurer `~/.npmrc` une fois par machine :
-
-```
-@valentindft:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=<PAT avec scope read:packages>
-```
-
-Génère le PAT sur **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens** avec la permission `read:packages`.
+Aucun. Le package est public sur le registre npm par défaut — pas de `~/.npmrc` à configurer, pas de token, pas de `npm login`. Un simple `npm install` suffit, y compris en CI et sur Vercel/Netlify.
 
 ---
 
@@ -283,7 +280,10 @@ npm list @valentindft/ng-base-config
    git tag v1.2.0
    git push && git push --tags
    ```
-   Le workflow GitHub Actions publie automatiquement sur GitHub Packages.
+   Le workflow GitHub Actions publie automatiquement sur npm via
+   **trusted publishing (OIDC)** — aucun `NPM_TOKEN` n'est stocké dans le repo.
+   Le workflow refuse de publier si le tag ne correspond pas à la `version` du
+   `package.json`.
 4. Dans chaque projet existant :
    ```bash
    npm update @valentindft/ng-base-config

@@ -1,13 +1,33 @@
 {
   "name": "@valentindft/ng-base-config",
-  "version": "1.2.3",
-  "description": "Config ESLint, Prettier, TypeScript et lint-staged partagee entre tous les projets Angular",
+  "version": "1.2.4",
+  "description": "Config ESLint, Prettier, TypeScript, Stylelint et lint-staged partagee entre tous les projets Angular",
   "license": "MIT",
+  "author": "Valentin Duffet",
+  "homepage": "https://github.com/ValentinDft/ng-base-config#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ValentinDft/ng-base-config.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ValentinDft/ng-base-config/issues"
+  },
+  "keywords": [
+    "angular",
+    "eslint-config",
+    "prettier-config",
+    "stylelint-config",
+    "tsconfig",
+    "lint-staged",
+    "typescript"
+  ],
   "type": "commonjs",
   "private": false,
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "files": [
     "eslint",
